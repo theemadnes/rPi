@@ -87,7 +87,7 @@ while True:
                 set_value = int(set_value)            # cast volume as integer
 
                 # print potentiometer value to console
-                print "reading is " + set_value
+                print "reading is " + str(set_value)
 
                 #print 'Volume = {volume}%' .format(volume = set_value)
                 #set_vol_cmd = 'sudo amixer cset numid=1 -- {volume}% > /dev/null' .format(volume = set_value)
