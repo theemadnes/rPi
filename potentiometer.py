@@ -2,9 +2,27 @@
 import time
 import os
 import RPi.GPIO as GPIO
+from boto import kinesis
 
 GPIO.setmode(GPIO.BCM)
 DEBUG = 1
+
+
+# set values
+STREAM_NAME = 'rPi_v1'
+
+# connect to oregon
+conn = kinesis.connect_to_region('us-west-2')
+response = conn.describe_stream(STREAM_NAME)
+
+shard_ids = []
+stream_name = None 
+if response and 'StreamDescription' in response:
+    stream_name = response['StreamDescription']['StreamName']                   
+    for shard_id in response['StreamDescription']['Shards']:
+         shard_id = shard_id['ShardId']
+         shard_iterator = conn.get_shard_iterator(stream_name, shard_id, shard_iterator_type)
+         shard_ids.append({'shard_id' : shard_id ,'shard_iterator' : shard_iterator['ShardIterator'] })
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
